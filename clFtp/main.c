@@ -6,6 +6,12 @@
 #include <arpa/inet.h>
 #include <netinet/in.h>
 
+int getaddrinfo(const char *node, // e.g. "www.example.com" or IP
+const char *service, // e.g. "http" or port number
+const struct addrinfo *hints,
+struct addrinfo **res);
+
+
 int main(int argc, char *argv[]){
 
 struct addrinfo hints, *res, *p;
@@ -45,9 +51,7 @@ return 2;
  }
 
 // convert the IP to a string and print it:
-2
-https://beej.us/guide/bgnet/examples/showip.c
-CHAPTER 5. SYSTEM CALLS OR BUST 20
+
 inet_ntop(p->ai_family, addr, ipstr, sizeof ipstr);
 printf(" %s: %s\n", ipver, ipstr);
 }
