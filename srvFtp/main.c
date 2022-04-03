@@ -38,9 +38,11 @@ int main(int argc, char *argv[])
 	
 
 	//esto esta mal
-	while(1)
+	int true = 1;
+	while(true)
 	{
 		new_fd = accept(sockfd, (struct sockaddr *)&their_addr, &addr_size); //reconocemos la existencia del cliente.
+		if(new_fd == -1) true = 0;
 	}
 	msg = "Estamos conectados loqui";
 	len = strlen(msg);
