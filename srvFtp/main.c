@@ -16,7 +16,6 @@ int main(int argc, char *argv[])
 	struct sockaddr_storage their_addr;
 	socklen_t addr_size;
 	struct addrinfo hints, *res;
-as
 
 	//hints seteado a 0, puerto igualado a lo enviado en cli
 	memset(&hints,0 , sizeof hints);
@@ -30,9 +29,7 @@ as
 	sockfd = socket(res->ai_family, res->ai_socktype, res->ai_protocol); //HACEMOS EL SOCKET QUE VAMOS A ESCUCHAR
 
 	bind(sockfd, res->ai_addr, res->ai_addrlen); // asociamos el puerto con el programa
-	while(1){
 	listen(sockfd, BACKLOG); // escuchamos al puerto que asociamos
-	}
 	addr_size = sizeof their_addr; 
 	
 
