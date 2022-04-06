@@ -5,7 +5,23 @@
 #include <sys/types.h>
 #include <string.h>
 #include <netdb.h>
-#include "comunicar.h" 
+#include "comunicar.h"
+
+void mainLoop(int socket)
+{
+    int continuar = 1;
+    char buf[1024];
+    while(continuar)
+    {
+        recibir(socket,buf);
+        printf("%s", buf);
+        if(strcmp(buf,"quit") == 0)
+            break;
+        memset(buf,0,1024);
+        enviarMensaje(socket);
+
+    }
+}
 
 int conectar(char *puerto, char *dominio)
 {
@@ -26,6 +42,10 @@ int conectar(char *puerto, char *dominio)
         }
         break;
     }
+    if(p==NULL)
+    {
+        return -1;
+    }
 
     freeaddrinfo(res);
     return sock;
@@ -39,22 +59,8 @@ int main(int argc, char *argv[])
     dominio = argv[1];
     puerto = argv[2];
     sockfd = conectar(puerto,dominio);
-
-    int seguir = 1;
-    while(seguir)
-        {
-            recibir(sockfd,buf);
-            printf("%s\n",buf);
-            enviarMensaje(sockfd);
-            if(strcmp(buf,"quit") == 0)
-            {
-                (close(sockfd));
-                seguir = 0;
-                break;
-            }
-            memset(buf,0,1024);
-        }
-    enviarMensaje(sockfd);
+    
+    mainLoop(sockfd);
     close(sockfd);
     return 0;
 }

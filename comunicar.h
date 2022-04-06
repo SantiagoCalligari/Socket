@@ -16,15 +16,15 @@ void sistMensaje(int puerto, char *msg)
 
 int enviarMensaje(int puerto)
 {
-    int len;
+    int len,er;
     char buf[1024];
     scanf("%[^\n]",buf);
     getchar();
     len = strlen(buf);
-    send(puerto, buf, len, 0);
+    er = send(puerto, buf, len, 0);
     printf("Su mensaje, '%s', fue enviado con un largo de; %i\n", buf, len);
     memset(buf,0,1024);
-    return len;
+    return er;
 }
 
     

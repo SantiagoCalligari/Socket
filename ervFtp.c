@@ -11,18 +11,21 @@ int autenticar() //autenticar nos va a devolver 1 si existe el usuario y es la m
 {
 }
 
-int tok() //tok linea a linea va a separa user:cs a user cs -> autent(user,contra);
+void tok(char *user, char *pass) 
+//tok linea a linea va a separa user:cs a user cs -> autent(user,contra);
 {
-    
+        printf("%s,%s",user,pass);
 }
 
 void userLogin(int socket)
 {
-    char logstart[] = "username:", user[128], passwd[128];
-    sistMensaje(socket,logstart);
+    char user[128], passwd[128];
+    sistMensaje(socket,"username:");
     recibir(socket, user);
+    
+    sistMensaje(socket,"\npassword");
     recibir(socket, passwd);
-    printf("%s %s",user,passwd);
+    tok(user,passwd);
     //tok llamar
 }
 
@@ -71,23 +74,11 @@ int main(int argc, char *argv[])
     sin_size = sizeof their_addr;
     //reconocemos la existencia del cliente.    
     new_fd = accept(sockfd, (struct sockaddr *)&their_addr, &sin_size); 
-    
-
-    int seguir = 1;
-    while(seguir)
-        {
-            enviarMensaje(new_fd);
-            recibir(new_fd,buf);
-            printf("%s\n",buf);
-            if(strcmp(buf,"quit") == 0)
-            {
-                close(new_fd);
-                close(sockfd);
-                break;
-            }
-            memset(buf,0,1024);
-        }
-    //shutdown(sockfd,2);
-    //shutdown(new_fd,2);
+    userLogin(new_fd); 
+    sistMensaje(new_fd,"quit");    
+    close(sockfd);
+    close(new_fd);
+    shutdown(sockfd,2);
+    shutdown(new_fd,2);
     return 0;
 }
