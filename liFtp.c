@@ -34,13 +34,27 @@ int conectar(char *puerto, char *dominio)
 int main(int argc, char *argv[])
 {
     int numbytes, sockfd;
-    char *puerto, *dominio;
+    char *puerto, *dominio, buf[1024];
     
     dominio = argv[1];
     puerto = argv[2];
     sockfd = conectar(puerto,dominio);
-    
-    recibir(sockfd);
+
+    int seguir = 1;
+    while(seguir)
+        {
+            recibir(sockfd,buf);
+            printf("%s\n",buf);
+            enviarMensaje(sockfd);
+            if(strcmp(buf,"quit") == 0)
+            {
+                (close(sockfd));
+                seguir = 0;
+                break;
+            }
+            memset(buf,0,1024);
+        }
+    enviarMensaje(sockfd);
     close(sockfd);
     return 0;
 }
