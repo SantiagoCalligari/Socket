@@ -6,7 +6,7 @@
 #include <string.h>
 #include <netdb.h>
 #define BACKLOG 1 //numero de conexiones permitidas al mismo tiempo.
-
+#include "comunicar.h"
 
 int socketbind(char *puerto)
 {
@@ -31,44 +31,31 @@ int socketbind(char *puerto)
         break;
     }
     freeaddrinfo(res);
-        
+    listen(sock, BACKLOG); // escuchamos al puerto que asociamos
     return sock;
 }
+
 
 int main(int argc, char *argv[])
 {
 //SOCKFD socket escucha, newfd socket conexion, len mensaje
 // their_add direccion de cliente, res resultado deb addrinfo
-    int sockfd,  new_fd, len, bytes_sent;  
-    char *msg, *puerto;
+    int sockfd,  new_fd;
+    char *puerto=argv[1];
     struct sockaddr_storage their_addr;
     socklen_t sin_size;
-    //hints seteado a 0, puerto igualado a lo enviado en cli
-    puerto = argv[1];
-
 
     sockfd = socketbind(puerto);
    
-    listen(sockfd, BACKLOG); // escuchamos al puerto que asociamos
-    printf("Buscando conexiones\n");
-//	while(1)
-    {
-        sin_size = sizeof their_addr;
-        new_fd = accept(sockfd, (struct sockaddr *)&their_addr, &sin_size); //reconocemos la existencia del cliente.
+    sin_size = sizeof their_addr;
+    new_fd = accept(sockfd, (struct sockaddr *)&their_addr, &sin_size); //reconocemos la existencia del cliente.    
+        
+    enviarMensaje(new_fd);
     
-        printf("supuestamente aceptamos desde\n");	
-        if(!fork())
-        {
-            close(sockfd);
-            if(send(new_fd, "Hello, World", 13, 0) == -1)
-                perror("send");
-            close(new_fd);
-            exit(0);
-        }
-        close(new_fd);
-    }
+    close(new_fd);
 
     //shutdown(sockfd,2);
     //shutdown(new_fd,2);
+    close(sockfd);
     return 0;
 }
