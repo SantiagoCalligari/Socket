@@ -8,34 +8,45 @@
 #define BACKLOG 1 //numero de conexiones permitidas al mismo tiempo.
 #include "comunicar.h"
 #include "autenticador.h"
-
-int socketbind(char *puerto)
+void get(int socket);
+void terminar(int socket)
 {
-    struct addrinfo hints, *res, *p;
-    int sock, rv;
-    int yes = 1;
-
-    memset(&hints, 0, sizeof hints);
-    hints.ai_family = AF_UNSPEC;    //usar ipv4 o ipv6
- 
-    hints.ai_socktype = SOCK_STREAM;//tcp
-    hints.ai_flags = AI_PASSIVE;	//llenar ip
-
-    if(rv = getaddrinfo(NULL, puerto, &hints, &res)!=0)
-        return -1;
-    
-    for(p=res;p!=NULL;p = p->ai_next)
-    {
-        sock = socket(p->ai_family, p->ai_socktype, p->ai_protocol);
-        setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int));
-        if(bind(sock,res->ai_addr, res->ai_addrlen) == -1)
-            close(sock);
-        break;
-    }
-    freeaddrinfo(res);
-    listen(sock, BACKLOG); // escuchamos al puerto que asociamos
-    return sock;
+    close(socket);
 }
+
+
+int queHacer(char *buf)
+{
+    int x;
+    if(strcmp(buf,"quit") == 0)
+        x = 0;
+    else if(strcmp(buf,"get") == 0)
+            x = 1;
+         else
+            x = 2;
+}
+void mainLoop(int socket)
+{
+    char buf[1024];
+    memset(buf,'\0',1024);
+    recibir(socket,buf);
+    switch(queHacer(buf))
+    {
+        case 0: terminar(socket);
+                     break;
+        case 1: get(socket);
+                     break;
+        case 2: enviarMensaje(socket);
+                mainLoop(socket);
+                     break;
+    }
+}
+
+void get(int socket)//aca iria una funcion re copada que mandaria cosas
+{
+    //algo;
+    mainLoop(socket);
+} 
 
 
 int main(int argc, char *argv[])
@@ -43,20 +54,21 @@ int main(int argc, char *argv[])
     //SOCKFD socket escucha, newfd socket conexion, len mensaje
     // their_add direccion de cliente, res resultado deb addrinfo
     int sockfd,  new_fd;
-    char *puerto=argv[1], buf[1024];
+    char *puerto=argv[1];
     struct sockaddr_storage their_addr;
     socklen_t sin_size;
 
-    sockfd = socketbind(puerto);
+    sockfd = socketBindSv(puerto);
    
     sin_size = sizeof their_addr;
     //reconocemos la existencia del cliente.    
     new_fd = accept(sockfd, (struct sockaddr *)&their_addr, &sin_size); 
-    userLogin(new_fd); 
+    if(userLogin(new_fd) == 1)
+    {
+        mainLoop(new_fd); 
+    }
     sistMensaje(new_fd,"quit");    
     close(sockfd);
-    close(new_fd);
     shutdown(sockfd,2);
-    shutdown(new_fd,2);
     return 0;
 }

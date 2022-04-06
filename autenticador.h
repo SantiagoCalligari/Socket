@@ -14,6 +14,14 @@ int autenticar(char *auten, char *str) //autenticar nos va a devolver 1 si exist
     return 0;
 }
 
+
+void llenarStr(int socket, char *str, char *mostrar)
+{
+    memset(str,'\0',128);
+    sistMensaje(socket,mostrar);
+    recibir(socket, str);
+}
+
 int tok(char *user, char *pass) 
 //tok linea a linea va a separa user:cs a user cs -> autent(user,contra);
 {
@@ -22,7 +30,7 @@ int tok(char *user, char *pass)
     strcpy(auten,user);
     strcat(auten,":");
     strcat(auten,pass);
-    fp = fopen("users.txt", "r");
+    fp = fopen("ftpusers", "r");
     for(fp;fp!=NULL;)
     {
         if(fgets(string, 60, fp) != NULL)
@@ -37,13 +45,8 @@ int tok(char *user, char *pass)
 int userLogin(int socket)
 {
     char user[128], passwd[128];
-    memset(user,'\0',128);
-    memset(passwd,'\0',128);
-    sistMensaje(socket,"username:");
-    recibir(socket, user);
-    
-    sistMensaje(socket,"\npassword");
-    recibir(socket, passwd);
+    llenarStr(socket, user, "username:");
+    llenarStr(socket, passwd, "passwd:");
     return tok(user,passwd);
     //tok llamar
 }

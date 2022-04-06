@@ -5,7 +5,7 @@
 #include <sys/types.h>
 #include <string.h>
 #include <netdb.h>
-
+#define BACKLOG 1
 
 void sistMensaje(int puerto, char *msg)
 {
@@ -22,7 +22,6 @@ int enviarMensaje(int puerto)
     getchar();
     len = strlen(buf);
     er = send(puerto, buf, len, 0);
-    printf("Su mensaje, '%s', fue enviado con un largo de; %i\n", buf, len);
     memset(buf,0,1024);
     return er;
 }
@@ -35,25 +34,61 @@ void recibir(int sock, char *buf)
 }
 
 
-void seguir(int new_fd, int ord)
+struct addrinfo *setHints(char *dominio, char*puerto)
 {
-    char buf[1024];
-    int seguir = 1;
-    while(1)
-        {
-            if(ord = 0) //0 SIGNIFICA QUE VENGO DEL SERVER
-                {
-                    enviarMensaje(new_fd);
-                    recibir(new_fd,buf);
-                    printf("%s\n",buf);
-                }else
-                {
-                    recibir(new_fd,buf);
-                    printf("%s\n",buf);
-                    enviarMensaje(new_fd);
-                }
-            if(strcmp(buf,"quit") == 0)
-                seguir = 0;
-            memset(buf,0,1024);
+    struct addrinfo hints, *res;
+    int rv;
+    memset(&hints,0, sizeof hints);
+    hints.ai_family = AF_UNSPEC;
+    hints.ai_socktype = SOCK_STREAM;
+    hints.ai_flags = AI_PASSIVE;        //llenar ip
+    rv = getaddrinfo(dominio,puerto, &hints, &res);
+    return res;
+}
+
+int socketBindSv(char *puerto)
+{
+    struct addrinfo *p;
+    int sock, rv;
+    int yes = 1;
+
+    p = setHints(NULL,puerto);
+
+    
+    for(p;p!=NULL;p = p->ai_next)
+    {
+        sock = socket(p->ai_family, p->ai_socktype, p->ai_protocol);
+        setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int));
+        if(bind(sock,p->ai_addr, p->ai_addrlen) == -1)
+            close(sock);
+        break;
+    }
+    freeaddrinfo(p);
+    listen(sock, BACKLOG); // escuchamos al puerto que asociamos
+    return sock;
+}
+
+int conectar(char *puerto, char *dominio)
+{
+    int sock,rv;
+    struct addrinfo *p;
+    
+    p = setHints(dominio,puerto);
+    for(p; p != NULL; p = p->ai_next)
+    {
+        sock = socket(p->ai_family, p->ai_socktype, p->ai_protocol);
+        if(connect(sock, p->ai_addr, p->ai_addrlen) == -1){
+            close(sock);
+            perror("client:connected");
+            continue;
         }
+        break;
+    }
+    if(p==NULL)
+    {
+        return -1;
+    }
+
+    freeaddrinfo(p);
+    return sock;
 }
