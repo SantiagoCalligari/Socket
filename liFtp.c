@@ -11,6 +11,7 @@ void mainLoop(int socket)
 {
     int continuar = 1;
     char buf[1024];
+    memset(buf,'\0',1024);
     while(continuar)
     {
         recibir(socket,buf);
@@ -59,7 +60,8 @@ int main(int argc, char *argv[])
     dominio = argv[1];
     puerto = argv[2];
     sockfd = conectar(puerto,dominio);
-    
+    if(sockfd == -1)
+        return -1;
     mainLoop(sockfd);
     close(sockfd);
     return 0;

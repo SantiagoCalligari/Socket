@@ -7,29 +7,7 @@
 #include <netdb.h>
 #define BACKLOG 1 //numero de conexiones permitidas al mismo tiempo.
 #include "comunicar.h"
-int autenticar() //autenticar nos va a devolver 1 si existe el usuario y es la misma contraseña.
-{
-}
-
-void tok(char *user, char *pass) 
-//tok linea a linea va a separa user:cs a user cs -> autent(user,contra);
-{
-        printf("%s,%s",user,pass);
-}
-
-void userLogin(int socket)
-{
-    char user[128], passwd[128];
-    sistMensaje(socket,"username:");
-    recibir(socket, user);
-    
-    sistMensaje(socket,"\npassword");
-    recibir(socket, passwd);
-    tok(user,passwd);
-    //tok llamar
-}
-
-
+#include "autenticador.h"
 
 int socketbind(char *puerto)
 {
