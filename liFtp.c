@@ -7,35 +7,46 @@
 #include <netdb.h>
 #include "comunicar.h"
 
+int loginCl(int socket,char *buf)
+{
+    char userRta[] = "USER ",tmp[128], passRta[] = "PASS";
+    memset(buf,'\0',1024);
+    recibir(socket,buf);
+    printf("%s",buf);
+
+    scanf("%[^\n]",tmp);
+    getchar();
+    strcat(userRta,tmp);
+    sistMensaje(socket, userRta);
+
+    memset(buf,'\0',1024);
+    recibir(socket,buf);
+    printf("%s",buf);
+
+    scanf("%[^\n]",tmp);
+    getchar();
+    strcat(passRta,tmp);
+    sistMensaje(socket, passRta);
+
+    
+    printf("finalStr, %s",passRta);
+}
 void mainLoop(int socket)
 {
-    int continuar = 1;
-    char buf[1024];
-    memset(buf,'\0',1024);
-    while(continuar)
-    {
-        recibir(socket,buf);
-        printf("%s", buf);
-        if(strcmp(buf,"quit") == 0)
-            break;
-        memset(buf,0,1024);
-        enviarMensaje(socket);
-
-    }
+    
 }
 
 
 int main(int argc, char *argv[])
 {
     int numbytes, sockfd;
-    char *puerto, *dominio, buf[1024];
+    char buf[1024];
     
-    dominio = argv[1];
-    puerto = argv[2];
-    sockfd = conectar(puerto,dominio);
+    sockfd = conectar(argv[2], argv[1]);
     if(sockfd == -1)
         return -1;
-    mainLoop(sockfd);
+    
+    loginCl(sockfd, buf);
     close(sockfd);
     return 0;
 }

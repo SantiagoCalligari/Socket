@@ -37,7 +37,7 @@ void recibir(int sock, char *buf)
 struct addrinfo *setHints(char *dominio, char*puerto)
 {
     struct addrinfo hints, *res;
-    int rv;
+    int rv; 
     memset(&hints,0, sizeof hints);
     hints.ai_family = AF_UNSPEC;
     hints.ai_socktype = SOCK_STREAM;
@@ -49,7 +49,7 @@ struct addrinfo *setHints(char *dominio, char*puerto)
 int socketBindSv(char *puerto)
 {
     struct addrinfo *p;
-    int sock, rv;
+    int sock;
     int yes = 1;
 
     p = setHints(NULL,puerto);

@@ -9,45 +9,8 @@
 #include "comunicar.h"
 #include "autenticador.h"
 void get(int socket);
-void terminar(int socket)
-{
-    close(socket);
-}
-
-
-int queHacer(char *buf)
-{
-    int x;
-    if(strcmp(buf,"quit") == 0)
-        x = 0;
-    else if(strcmp(buf,"get") == 0)
-            x = 1;
-         else
-            x = 2;
-}
-void mainLoop(int socket)
-{
-    char buf[1024];
-    memset(buf,'\0',1024);
-    recibir(socket,buf);
-    switch(queHacer(buf))
-    {
-        case 0: terminar(socket);
-                     break;
-        case 1: get(socket);
-                     break;
-        case 2: enviarMensaje(socket);
-                mainLoop(socket);
-                     break;
-    }
-}
-
-void get(int socket)//aca iria una funcion re copada que mandaria cosas
-{
-    //algo;
-    mainLoop(socket);
-} 
-
+void terminar(int socket);
+int queHacer(char *buf);
 
 int main(int argc, char *argv[])
 {
@@ -65,7 +28,7 @@ int main(int argc, char *argv[])
     new_fd = accept(sockfd, (struct sockaddr *)&their_addr, &sin_size); 
     if(userLogin(new_fd) == 1)
     {
-        mainLoop(new_fd); 
+        printf("Login exitoso");
     }
     sistMensaje(new_fd,"quit");    
     close(sockfd);

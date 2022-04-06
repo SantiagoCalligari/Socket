@@ -3,5 +3,39 @@
     // Hover to view descriptions of existing attributes.
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
-    "configurations": []
+    "configurations": 
+    [
+        {
+            "name": "(gdb) Launch",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${fileDirname}/bin/${fileBasenameNoExtension}",
+            "args": ["${input:arg1}", "${input:arg2}"],
+            "cwd": "${workspaceFolder}",
+            "MIMode": "gdb",
+            "setupCommand":
+            [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ]
+
+        }
+    ],
+    "inputs":
+    [
+        {
+            "id":"arg1",
+            "type":"promptString",
+            "description": "Program Args",
+        },
+        {
+            "id":"arg2",
+            "type":"promptString",
+            "description": "Program Args",
+        }
+    ]
+    ]
 }

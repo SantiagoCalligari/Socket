@@ -1,0 +1,15 @@
+{
+  "configurations": {
+    "Launch": {
+      "adapter": "vscode-cpptools",
+      "configuration": {
+        "request": "launch",
+        "program": "clFtp",
+        "cwd": "/home/santiago/Documentos/Sock",
+        "args": ["127.0.0.1", "11000"],
+        "externalConsole": true,
+        "MIMode": "gdb"
+      }
+    }
+  }
+}
