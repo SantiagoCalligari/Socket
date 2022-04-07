@@ -65,8 +65,8 @@ int userLogin(int socket)//el servidor pide us y pass
 {
     //tiene que venir "USER <nombreUsuario>\n"
     char user[128], passwd[128];
-    llenarStr(socket, user, "username:");
-    llenarStr(socket, passwd, "passwd:");
+    llenarStr(socket, user, "220");
+    llenarStr(socket, passwd, "331");
     return toks(user,passwd);
 }
 
