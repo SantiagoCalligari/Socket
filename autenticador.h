@@ -5,6 +5,54 @@
 #include <sys/types.h>
 #include <string.h>
 #include <netdb.h>
+char* separar(char *str)
+{
+    char *tok;
+    tok = strtok(str," ");
+    tok = strtok(NULL, " ");
+    return tok;
+}
+
+
+int toks(char *user, char*passwd)
+{
+    char temp[256];
+    memset(temp, '\0', 256);
+    user = separar(user);
+    passwd = separar(passwd);
+    strcat(temp,user);
+    strcat(temp,":");
+    strcat(temp,passwd);
+    strcat(temp,"\n");
+
+    return compareEnFile(temp);   
+}
+
+
+int autenticar(char *comparar, char* registrado)
+{
+    if(strcmp(comparar,registrado) == 0)
+        return 1;
+    else return 0;
+}
+
+int compareEnFile(char *userAComparar)
+{
+    char userRegistrado[256];
+    FILE *fp;
+    fp = fopen("ftpusers","r");
+    for(fp;fp!=NULL;)
+    {
+        if(fgets(userRegistrado, 256, fp) != NULL)
+        {
+            if(autenticar(userAComparar, userRegistrado))
+            return 1;
+        }
+    }
+       
+    fclose(fp);
+    return 0;
+}
 
 void llenarStr(int socket, char *str, char *mostrar)
 {
@@ -19,5 +67,6 @@ int userLogin(int socket)//el servidor pide us y pass
     char user[128], passwd[128];
     llenarStr(socket, user, "username:");
     llenarStr(socket, passwd, "passwd:");
+    return toks(user,passwd);
 }
 

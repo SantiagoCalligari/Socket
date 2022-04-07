@@ -9,7 +9,7 @@
 
 int loginCl(int socket,char *buf)
 {
-    char userRta[] = "USER ",tmp[128], passRta[] = "PASS";
+    char userRta[128] = "USER ",tmp[256], passRta[128] = "PASS ";
     memset(buf,'\0',1024);
     recibir(socket,buf);
     printf("%s",buf);
@@ -26,10 +26,10 @@ int loginCl(int socket,char *buf)
     scanf("%[^\n]",tmp);
     getchar();
     strcat(passRta,tmp);
-    sistMensaje(socket, passRta);
+    sistMensaje(socket, passRta);    
 
+    recibir(socket,buf);
     
-    printf("finalStr, %s",passRta);
 }
 void mainLoop(int socket)
 {

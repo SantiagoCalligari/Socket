@@ -28,7 +28,7 @@ int main(int argc, char *argv[])
     new_fd = accept(sockfd, (struct sockaddr *)&their_addr, &sin_size); 
     if(userLogin(new_fd) == 1)
     {
-        printf("Login exitoso");
+        fprintf(stderr,"Login exitoso");
     }
     sistMensaje(new_fd,"quit");    
     close(sockfd);

@@ -1,6 +1,7 @@
 {
     "configurations": [
         {
+            "name": "Linux",
             "defines": [
                 "__linux__",
                 "__x86_64__",
